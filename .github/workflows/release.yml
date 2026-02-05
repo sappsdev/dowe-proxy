@@ -141,7 +141,7 @@ jobs:
 
           curl -fsSL "${REPO_URL}/KEY.gpg" | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
 
-          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] ${REPO_URL}/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
+          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] ${REPO_URL} stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
 
           sudo apt-get update
           sudo apt-get install -y dowe-proxy
@@ -180,7 +180,7 @@ jobs:
             <h2>Manual Install</h2>
             <pre>curl -fsSL https://sappsdev.github.io/dowe-proxy/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
 
-          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] https://sappsdev.github.io/dowe-proxy/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
+          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] https://sappsdev.github.io/dowe-proxy stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
 
           sudo apt update
           sudo apt install dowe-proxy</pre>
@@ -192,8 +192,8 @@ jobs:
             
             <h2>Downloads</h2>
             <ul>
-              <li><a href="apt/pool/main/dowe-proxy_${VERSION}_amd64.deb">dowe-proxy_${VERSION}_amd64.deb</a></li>
-              <li><a href="apt/pool/main/dowe-proxy_${VERSION}_arm64.deb">dowe-proxy_${VERSION}_arm64.deb</a></li>
+              <li><a href="pool/main/dowe-proxy_${VERSION}_amd64.deb">dowe-proxy_${VERSION}_amd64.deb</a></li>
+              <li><a href="pool/main/dowe-proxy_${VERSION}_arm64.deb">dowe-proxy_${VERSION}_arm64.deb</a></li>
             </ul>
           </body>
           </html>
