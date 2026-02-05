@@ -8,11 +8,9 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -133,7 +131,7 @@ jobs:
           #!/bin/bash
           set -e
 
-          REPO_URL="${1:-https://dowe-dev.github.io/dowe-proxy}"
+          REPO_URL="${1:-https://sappsdev.github.io/dowe-proxy}"
 
           echo "Adding Dowe Proxy repository..."
 
@@ -151,7 +149,7 @@ jobs:
           EOF
           chmod +x dist/apt/install.sh
 
-      - name: Copy GPG key
+      - name: Copy GPG key to apt folder
         run: cp dist/KEY.gpg dist/apt/
 
       - name: Create index.html
@@ -173,12 +171,12 @@ jobs:
             <p>Bun-based reverse proxy with automatic SSL via certbot.</p>
             
             <h2>Quick Install (Debian/Ubuntu)</h2>
-            <pre>curl -fsSL https://dowe-dev.github.io/dowe-proxy/install.sh | sudo bash</pre>
+            <pre>curl -fsSL https://sappsdev.github.io/dowe-proxy/install.sh | sudo bash</pre>
             
             <h2>Manual Install</h2>
-            <pre>curl -fsSL https://dowe-dev.github.io/dowe-proxy/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
+            <pre>curl -fsSL https://sappsdev.github.io/dowe-proxy/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
 
-          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] https://dowe-dev.github.io/dowe-proxy/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
+          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] https://sappsdev.github.io/dowe-proxy/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
 
           sudo apt update
           sudo apt install dowe-proxy</pre>
@@ -190,17 +188,19 @@ jobs:
             
             <h2>Downloads</h2>
             <ul>
-              <li><a href="pool/main/dowe-proxy_${VERSION}_amd64.deb">dowe-proxy_${VERSION}_amd64.deb</a></li>
-              <li><a href="pool/main/dowe-proxy_${VERSION}_arm64.deb">dowe-proxy_${VERSION}_arm64.deb</a></li>
+              <li><a href="apt/pool/main/dowe-proxy_${VERSION}_amd64.deb">dowe-proxy_${VERSION}_amd64.deb</a></li>
+              <li><a href="apt/pool/main/dowe-proxy_${VERSION}_arm64.deb">dowe-proxy_${VERSION}_arm64.deb</a></li>
             </ul>
           </body>
           </html>
           EOF
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist/apt
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/apt
+          cname: ""
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -210,14 +210,3 @@ jobs:
             dist/dowe-proxy-linux-arm64
             dist/*.deb
           generate_release_notes: true
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
