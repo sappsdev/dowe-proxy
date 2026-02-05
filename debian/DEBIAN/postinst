@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if ! id -u dowe-proxy > /dev/null 2>&1; then
+    useradd --system --no-create-home --shell /usr/sbin/nologin dowe-proxy
+fi
+
 mkdir -p /var/lib/dowe-proxy/projects
 mkdir -p /var/lib/dowe-proxy/data
 mkdir -p /tmp/dowe-proxy
@@ -10,14 +14,9 @@ chown -R dowe-proxy:dowe-proxy /tmp/dowe-proxy
 chmod 755 /var/lib/dowe-proxy
 chmod 755 /tmp/dowe-proxy
 
-if ! id -u dowe-proxy > /dev/null 2>&1; then
-    useradd --system --no-create-home --shell /usr/sbin/nologin dowe-proxy
-fi
-
 systemctl daemon-reload
 systemctl enable dowe-proxy.service
-systemctl start dowe-proxy.service
 
 echo "dowe-proxy installed successfully!"
 echo "Configure with: /etc/dowe-proxy/config.env"
-echo "Manage with: systemctl {start|stop|restart|status} dowe-proxy"
+echo "Start with: systemctl start dowe-proxy"
