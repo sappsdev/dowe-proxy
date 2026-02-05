@@ -1,0 +1,22 @@
+[Unit]
+Description=Dowe Proxy - Bun Reverse Proxy with Auto SSL
+Documentation=https://github.com/dowe-dev/dowe-proxy
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/bin/dowe-proxy
+Restart=always
+RestartSec=5
+EnvironmentFile=/etc/dowe-proxy/config.env
+
+WorkingDirectory=/var/lib/dowe-proxy
+StandardOutput=journal
+StandardError=journal
+
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target

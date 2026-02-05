@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+systemctl stop dowe-proxy.service || true
+systemctl disable dowe-proxy.service || true

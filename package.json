@@ -1,0 +1,21 @@
+{
+  "name": "dowe-proxy",
+  "version": "1.0.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch run src/index.ts",
+    "build": "bun build src/index.ts --compile --outfile dowe-proxy",
+    "build:linux": "bash scripts/build-linux.sh",
+    "build:deb": "bash scripts/build-deb.sh",
+    "build:sample": "bun build examples/sample-project.ts --compile --outfile examples/sample-project",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

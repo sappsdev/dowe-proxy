@@ -1,0 +1,223 @@
+name: Release APT Repository
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Get version
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Build Linux binaries
+        run: |
+          mkdir -p dist
+          bun build src/index.ts --compile --target=bun-linux-x64 --outfile dist/dowe-proxy-linux-x64
+          bun build src/index.ts --compile --target=bun-linux-arm64 --outfile dist/dowe-proxy-linux-arm64
+
+      - name: Build .deb packages
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+
+          for ARCH in amd64 arm64; do
+            DEB_ROOT="dist/deb-${ARCH}"
+            mkdir -p "${DEB_ROOT}/DEBIAN"
+            mkdir -p "${DEB_ROOT}/usr/bin"
+            mkdir -p "${DEB_ROOT}/etc/systemd/system"
+            mkdir -p "${DEB_ROOT}/etc/dowe-proxy"
+            mkdir -p "${DEB_ROOT}/var/lib/dowe-proxy/projects"
+            mkdir -p "${DEB_ROOT}/var/lib/dowe-proxy/data"
+
+            if [ "$ARCH" = "amd64" ]; then
+              cp dist/dowe-proxy-linux-x64 "${DEB_ROOT}/usr/bin/dowe-proxy"
+            else
+              cp dist/dowe-proxy-linux-arm64 "${DEB_ROOT}/usr/bin/dowe-proxy"
+            fi
+            chmod 755 "${DEB_ROOT}/usr/bin/dowe-proxy"
+
+            cat > "${DEB_ROOT}/DEBIAN/control" << EOF
+          Package: dowe-proxy
+          Version: ${VERSION}
+          Section: web
+          Priority: optional
+          Architecture: ${ARCH}
+          Depends: certbot
+          Maintainer: Dowe Dev <admin@dowe.dev>
+          Description: Bun-based reverse proxy with automatic SSL
+           A lightweight reverse proxy that routes domains to compiled
+           Bun projects via Unix sockets with automatic SSL certificate
+           generation using certbot.
+          EOF
+
+            cp debian/DEBIAN/postinst "${DEB_ROOT}/DEBIAN/"
+            cp debian/DEBIAN/prerm "${DEB_ROOT}/DEBIAN/"
+            chmod 755 "${DEB_ROOT}/DEBIAN/postinst"
+            chmod 755 "${DEB_ROOT}/DEBIAN/prerm"
+
+            cp debian/etc/systemd/system/dowe-proxy.service "${DEB_ROOT}/etc/systemd/system/"
+            cp debian/etc/dowe-proxy/config.env "${DEB_ROOT}/etc/dowe-proxy/"
+
+            dpkg-deb --build "${DEB_ROOT}" "dist/dowe-proxy_${VERSION}_${ARCH}.deb"
+          done
+
+      - name: Generate GPG key
+        run: |
+          cat > gpg-batch << EOF
+          %no-protection
+          Key-Type: RSA
+          Key-Length: 4096
+          Name-Real: Dowe Proxy
+          Name-Email: admin@dowe.dev
+          Expire-Date: 0
+          %commit
+          EOF
+          gpg --batch --gen-key gpg-batch
+          gpg --armor --export > dist/KEY.gpg
+
+      - name: Create APT repository
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mkdir -p dist/apt/pool/main
+          mkdir -p dist/apt/dists/stable/main/binary-amd64
+          mkdir -p dist/apt/dists/stable/main/binary-arm64
+
+          cp dist/*.deb dist/apt/pool/main/
+
+          cd dist/apt
+
+          dpkg-scanpackages pool/main /dev/null > dists/stable/main/binary-amd64/Packages
+          gzip -k dists/stable/main/binary-amd64/Packages
+
+          dpkg-scanpackages pool/main /dev/null > dists/stable/main/binary-arm64/Packages
+          gzip -k dists/stable/main/binary-arm64/Packages
+
+          cat > dists/stable/Release << EOF
+          Origin: Dowe Proxy
+          Label: Dowe Proxy
+          Suite: stable
+          Codename: stable
+          Architectures: amd64 arm64
+          Components: main
+          Description: Dowe Proxy APT Repository
+          EOF
+
+          apt-ftparchive release dists/stable >> dists/stable/Release
+
+          cd ../..
+          gpg --armor --detach-sign --output dist/apt/dists/stable/Release.gpg dist/apt/dists/stable/Release
+          gpg --armor --clearsign --output dist/apt/dists/stable/InRelease dist/apt/dists/stable/Release
+
+      - name: Create install script
+        run: |
+          cat > dist/apt/install.sh << 'EOF'
+          #!/bin/bash
+          set -e
+
+          REPO_URL="${1:-https://dowe-dev.github.io/dowe-proxy}"
+
+          echo "Adding Dowe Proxy repository..."
+
+          curl -fsSL "${REPO_URL}/KEY.gpg" | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
+
+          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] ${REPO_URL}/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
+
+          sudo apt update
+          sudo apt install -y dowe-proxy
+
+          echo ""
+          echo "Dowe Proxy installed!"
+          echo "Configure: sudo nano /etc/dowe-proxy/config.env"
+          echo "Start: sudo systemctl start dowe-proxy"
+          EOF
+          chmod +x dist/apt/install.sh
+
+      - name: Copy GPG key
+        run: cp dist/KEY.gpg dist/apt/
+
+      - name: Create index.html
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          cat > dist/apt/index.html << EOF
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Dowe Proxy - APT Repository</title>
+            <style>
+              body { font-family: system-ui; max-width: 800px; margin: 50px auto; padding: 20px; }
+              code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
+              pre { background: #1e1e1e; color: #fff; padding: 20px; border-radius: 8px; overflow-x: auto; }
+            </style>
+          </head>
+          <body>
+            <h1>🚀 Dowe Proxy v${VERSION}</h1>
+            <p>Bun-based reverse proxy with automatic SSL via certbot.</p>
+            
+            <h2>Quick Install (Debian/Ubuntu)</h2>
+            <pre>curl -fsSL https://dowe-dev.github.io/dowe-proxy/install.sh | sudo bash</pre>
+            
+            <h2>Manual Install</h2>
+            <pre>curl -fsSL https://dowe-dev.github.io/dowe-proxy/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
+
+          echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] https://dowe-dev.github.io/dowe-proxy/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
+
+          sudo apt update
+          sudo apt install dowe-proxy</pre>
+            
+            <h2>After Installation</h2>
+            <pre>sudo nano /etc/dowe-proxy/config.env
+          sudo systemctl start dowe-proxy
+          sudo systemctl status dowe-proxy</pre>
+            
+            <h2>Downloads</h2>
+            <ul>
+              <li><a href="pool/main/dowe-proxy_${VERSION}_amd64.deb">dowe-proxy_${VERSION}_amd64.deb</a></li>
+              <li><a href="pool/main/dowe-proxy_${VERSION}_arm64.deb">dowe-proxy_${VERSION}_arm64.deb</a></li>
+            </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/apt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/dowe-proxy-linux-x64
+            dist/dowe-proxy-linux-arm64
+            dist/*.deb
+          generate_release_notes: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

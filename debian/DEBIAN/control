@@ -1,0 +1,11 @@
+Package: dowe-proxy
+Version: 1.0.0
+Section: web
+Priority: optional
+Architecture: amd64
+Depends: certbot
+Maintainer: Dowe Dev <admin@dowe.dev>
+Description: Bun-based reverse proxy with automatic SSL
+ A lightweight reverse proxy that routes domains to compiled
+ Bun projects via Unix sockets with automatic SSL certificate
+ generation using certbot.
