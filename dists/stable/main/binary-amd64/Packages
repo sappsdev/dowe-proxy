@@ -1,13 +1,13 @@
 Package: dowe-proxy
-Version: 1.0.2
-Architecture: arm64
+Version: 1.0.3
+Architecture: amd64
 Maintainer: Dowe Dev <admin@dowe.dev>
-Depends: certbot
-Filename: pool/main/dowe-proxy_1.0.2_arm64.deb
-Size: 27557522
-MD5sum: 4356ac9fba7c904c1d71bcd121ecc3cb
-SHA1: ccfcd49c94debd413d7d5a40cb5591aebc69e39f
-SHA256: ea11608c7b5279e475b5079aff0c46869c33d03ad7f5cd8ff22384805e5788f1
+Recommends: certbot
+Filename: pool/main/amd64/dowe-proxy_1.0.3_amd64.deb
+Size: 28490282
+MD5sum: 05844ce0a33a632dc10e39dc76e05878
+SHA1: 2caa824fa0cfef91b042f71f93a9a9bd1d834d75
+SHA256: b339413d09278b8da29f5b954f505343fe0a43cef74b5bbdcf63e15c77659edd
 Section: web
 Priority: optional
 Description: Bun-based reverse proxy with automatic SSL
