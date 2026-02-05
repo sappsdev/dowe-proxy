@@ -1,0 +1,51 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: Dowe Proxy
+Label: Dowe Proxy
+Suite: stable
+Codename: stable
+Architectures: amd64 arm64
+Components: main
+Description: Dowe Proxy APT Repository
+Date: Thu, 05 Feb 2026 01:46:54 +0000
+MD5Sum:
+ 557b63b9e8e42bc788aea83c0a46d797              189 Release
+ 3a5db2a57e4bfcd09e699b11514b487c              572 main/binary-amd64/Packages
+ fe8f50b69776700fab010b6b8bd88cc3              417 main/binary-amd64/Packages.gz
+ 3a5db2a57e4bfcd09e699b11514b487c              572 main/binary-arm64/Packages
+ b44c370530fb6404e3fade2fed394224              417 main/binary-arm64/Packages.gz
+SHA1:
+ 6b85fe83ae068a423469c0a91e9224ab3da6ef99              189 Release
+ 927e8914b3851ee445772f243ddd553c8a3fe967              572 main/binary-amd64/Packages
+ 4880c845524ac25827ce337b98f7dd432da10df4              417 main/binary-amd64/Packages.gz
+ 927e8914b3851ee445772f243ddd553c8a3fe967              572 main/binary-arm64/Packages
+ 85b475037c3aab8c6c00a262ae0ec3ad67fe9564              417 main/binary-arm64/Packages.gz
+SHA256:
+ 82e912bbe1f0bef1ccc77d81219883499ffb09e3392a31b43b3d19570189908b              189 Release
+ 18a645355326b569646235ef6f1153e16316ea403e4b00bde2a5fecbf11ab99b              572 main/binary-amd64/Packages
+ 40ac81b529c223c75bb6e0b8bbb929c4bfd443152bfaaa4ed116ee8ebe8f3db5              417 main/binary-amd64/Packages.gz
+ 18a645355326b569646235ef6f1153e16316ea403e4b00bde2a5fecbf11ab99b              572 main/binary-arm64/Packages
+ a84d70848e8cd7de04a2782d69f2e0b42cac46082cdf982dbdc61b9fded871e5              417 main/binary-arm64/Packages.gz
+SHA512:
+ cfede7217501b1771f4a57954b96961152f22521f83e6a2d304b29f38d1ae9db9f37018fbfdd93b4f9e082a2863f6baa2347207e09c6ed436c4a3a57e836536a              189 Release
+ e755700f0b271416a42ffe38f85828b3e197294f1e882e74a3de605978716443e5926289e88faa000a179ee3867c6668799fc2609987230ab97c22060a4aa601              572 main/binary-amd64/Packages
+ 4afa1ad4b0155b86bd6e00b3fcdbdd06d6ed494cc16e0ad810c3c9f5b8f238b282c2ddae0bdb0b47fb5c6efab15ee00d757730ba52a8fa7a67523e4909880902              417 main/binary-amd64/Packages.gz
+ e755700f0b271416a42ffe38f85828b3e197294f1e882e74a3de605978716443e5926289e88faa000a179ee3867c6668799fc2609987230ab97c22060a4aa601              572 main/binary-arm64/Packages
+ 964eaf268c08174a54d9161f9dd273946f48f880b12f04c674c69c2b62a08961c10c9dffacaf87e2e1a3a80c6dd55bc9203a0a533311c1332a3bf60ea22134dd              417 main/binary-arm64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEvN1+oM2lIitcJxW4uZLzOBdU8AIFAmmD9o4ACgkQuZLzOBdU
+8AJQNg//YUjKeuZte0g/lWyhyvUqPTj1GqO6qVuGAwIAMCodubaHEfqOjC9Mgggr
+Wk+yw3Ank+mMh7thXuSTY9ymajEdP0hdAvRPTfriSk6ZW90IImHHPGB9eJ5PFIyF
+OC2FyobzaQWVv8bIWR+zHLO/rHjfSWuT6hi4GgUNPa3Fq2grbCpvpbO4/i9gDrHv
+8md5X8Ay4lutzTaw4SPzxTIYqPfDxWDfTkDzv/O1B3J98RYPL9BPIG/wRaR6LZ8g
+kHRyf+h18T9vXHQjfmPUX02q3vL9tCoknu3cX0LvyprkazbtGzD9z4VN/bE2l9IC
+Vb2W7Cl6NnWix+J/XfmzdQQZ+/Crt6aYMAjOoo3RZsC78cX29q34uempGvtGl0GZ
+yQwqszEGbt8P/Jx4OFBRuaIMM7eNnlJDvjcXthbFwfWHS8fX23V5haWK9s6fiHXv
+wPKj39VATR5jwJHJKzuJmZRaZM0NzPKMYcEPYZ/OoIP87YxsbOxUq4bdLG58mpHn
+X8sbmQYV14GKRbx+ZFfSFXiiiD8TdpG3g77jr9bfV49I45kmrcfTLYqe/Z9Zskw2
+jOSen+eKO1fGzu2CQDZY1j2XJTQz0KSwGRa6LrdYXfUkNf+9y2YPH4ujNdgxLvdX
+aHOLZA3278whgXLJKpuUwEViHZS/4SfR9jaCFgqcuRevU1gOua0=
+=2liT
+-----END PGP SIGNATURE-----
