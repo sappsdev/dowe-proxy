@@ -11,7 +11,7 @@ echo "Adding Dowe Proxy repository..."
 
 curl -fsSL "${REPO_URL}/KEY.gpg" | sudo gpg --dearmor -o /usr/share/keyrings/dowe-proxy.gpg
 
-echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] ${REPO_URL}/apt stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
+echo "deb [signed-by=/usr/share/keyrings/dowe-proxy.gpg] ${REPO_URL} stable main" | sudo tee /etc/apt/sources.list.d/dowe-proxy.list
 
 sudo apt-get update
 sudo apt-get install -y dowe-proxy
